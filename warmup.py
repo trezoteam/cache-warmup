@@ -5,10 +5,12 @@ import sys
 
 parser = argparse.ArgumentParser(description="Warm up a website's page cache (initially thought for Magento 2).")
 parser.add_argument('domain', type=str, help="The domain to crawl")
+parser.add_argument('-M', '--max-requests', type=int, help="Maximum number of requests to perform")
 parser.add_argument('-H', '--header', type=str, nargs='*', help="A header in the format header:value.")
 
 args = parser.parse_args()
 domain = args.domain
+max_reqs = args.max_requests
 headers={}
 if args.header:
     for header in args.header:
@@ -19,7 +21,7 @@ session = requests_html.HTMLSession()
 stack = [domain]
 done = []
 
-while stack:
+while stack and len(done) < max_reqs:
     current = stack.pop()
     done.append(current)
     status_code=""
